@@ -31,14 +31,15 @@ optparse.parse!
 options[:threads] ||= 1
 options[:repetitions] ||= 1
 
-require 'benchmarker'
+require 'benchmark-extensions'
+require 'bme/simulations'
 
 init_file = "#{root_dir}/init.rb"
 require init_file if init_file
 
 Dir.glob("#{root_dir}/simulations/*.rb").each { |f| require f }
 
-simulations = Benchmarker::Simulation.select { |c| options[:simulation] ? c.name == options[:simulation] : true }
+simulations = BME::Simulation.select { |c| options[:simulation] ? c.name == options[:simulation] : true }
 
 labels = simulations.reduce([]) do |l, simulation_class|
   simulation_class.steps.each do |s|
@@ -51,9 +52,9 @@ end
 aggregator = nil
 
 Benchmark.bm(40, *labels, '>total:') do |bm|
-  aggregator = Benchmarker::ReportAggregator.new(bm)
+  aggregator = BME::ReportAggregator.new(bm)
 
-  Benchmarker::Runner.run(options[:threads], options[:repetitions]) do |run_id|
+  BME::Runner.run(options[:threads], options[:repetitions]) do |run_id|
     simulations.each do |simulation_class|
       next if options[:simulation] && simulation_class.name != options[:simulation]
       simulation_class.run(run_id, aggregator)

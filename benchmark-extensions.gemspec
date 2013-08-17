@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'benchmarker/version'
+require 'bme/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'benchmarker'
-  gem.version       = Benchmarker::VERSION
+  gem.name          = 'benchmark-extensions'
+  gem.version       = BME::VERSION
   gem.authors       = ['Lenny Marks']
   gem.email         = %w(lenny@aps.org)
-  gem.description   = %q{Benchmark framework}
-  gem.summary       = %q{Benchmark framework}
+  gem.description   = %q{Benchmark extensions}
+  gem.summary       = %q{Benchmark extensions}
   gem.homepage      = ''
 
   gem.files         = `git ls-files`.split($/)
