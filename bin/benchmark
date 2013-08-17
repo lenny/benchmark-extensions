@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+
+root_dir = File.dirname(ENV['BUNDLE_GEMFILE'])
+
+require 'optparse'
+require 'benchmark'
+
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.banner = 'Usage: benchmark [options]'
+
+  opts.on('-h', '--help', 'Display this screen') do
+    puts opts
+    exit(0)
+  end
+
+  opts.on('-t', '--threads NUM', 'Number of simultaneous threads per thread group') do |v|
+    options[:threads] = v.to_i
+  end
+
+  opts.on('-r', '--repetitions NUM', 'Number of repetitions per thread') do |v|
+    options[:repetitions] = v.to_i
+  end
+
+  opts.on('-s', '--simulation NAME', 'Run only specified simulation') do |v|
+    options[:simulation] = v
+  end
+end
+optparse.parse!
+
+options[:threads] ||= 1
+options[:repetitions] ||= 1
+
+require 'benchmarker'
+
+init_file = "#{root_dir}/init.rb"
+require init_file if init_file
+
+Dir.glob("#{root_dir}/simulations/*.rb").each { |f| require f }
+
+simulations = Benchmarker::Simulation.select { |c| options[:simulation] ? c.name == options[:simulation] : true }
+
+labels = simulations.reduce([]) do |l, simulation_class|
+  simulation_class.steps.each do |s|
+    l << "#{simulation_class.label}.#{s}"
+  end
+  l << simulation_class.label
+  l
+end
+
+aggregator = nil
+
+Benchmark.bm(40, *labels, '>total:') do |bm|
+  aggregator = Benchmarker::ReportAggregator.new(bm)
+
+  Benchmarker::Runner.run(options[:threads], options[:repetitions]) do |run_id|
+    simulations.each do |simulation_class|
+      next if options[:simulation] && simulation_class.name != options[:simulation]
+      simulation_class.run(run_id, aggregator)
+    end
+  end
+
+  aggregator.totals(labels)
+end
+
+puts "\n#{aggregator.stats(40, 5, labels)}"
