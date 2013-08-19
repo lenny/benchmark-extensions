@@ -35,8 +35,8 @@ module BME
       p = precision
       labels.each do |k|
         realtimes = keyed_reports.fetch(k).map(&:real)
-        buf << sprintf("%-#{width}s num(%10.10d) total(%.#{p}f) avg(%.#{p}f) median(%.#{p}f) std(%.#{p}f) min(%.#{p}f) max(%.#{p}f)  \n",
-                       k, realtimes.size, realtimes.sum, realtimes.average, realtimes.median, realtimes.standard_deviation, realtimes.min, realtimes.max)
+        buf << sprintf("%-#{width}s total(%.#{p}f) avg(%.#{p}f) median(%.#{p}f) std(%.#{p}f) min(%.#{p}f) max(%.#{p}f)  \n",
+                       "#{k}(#{realtimes.size})", realtimes.sum, realtimes.average, realtimes.median, realtimes.standard_deviation, realtimes.min, realtimes.max)
       end
       buf
     end
