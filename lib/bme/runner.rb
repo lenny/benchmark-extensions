@@ -1,4 +1,4 @@
-module Benchmarker
+module BME
   class Runner
     class << self
       def run(threads, repetitions, &blk)

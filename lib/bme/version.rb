@@ -1,3 +1,3 @@
-module Benchmarker
+module BME
   VERSION = "0.0.1"
 end

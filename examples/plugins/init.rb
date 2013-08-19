@@ -17,4 +17,4 @@ module SimulationHelpers
    end
 end
 
-Benchmarker::Simulation.add_helper(SimulationHelpers)
+BME::Simulation.add_helper(SimulationHelpers)

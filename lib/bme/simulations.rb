@@ -1,4 +1,27 @@
-module Benchmarker
+module BME
+  class Simulation
+    extend Enumerable
+
+    class << self
+      attr_reader :simulations, :helpers
+
+      def add(simulation_class)
+        simulations << simulation_class
+      end
+
+      def each(&blk)
+        simulations.each(&blk)
+      end
+
+      def add_helper(mixin)
+        self.helpers << mixin
+      end
+    end
+
+    @simulations = []
+    @helpers = []
+  end
+
   module SimulationClassMethods
     def steps
       instance_methods.map { |m| m[/^simulate_(.*)/, 1] }.compact
@@ -21,11 +44,11 @@ module Benchmarker
       batch_args.first
     end
 
+    private
+
     def qualified_label
       "#{run_id} #{self.class.label} #{subject}"
     end
-
-    private
 
     def setup(run_id, aggregator, *args)
       @run_id, @aggregator, @batch_args = run_id, aggregator, args
@@ -33,7 +56,7 @@ module Benchmarker
 
     def run
       self.class.steps.each do |step|
-        aggregator.report(self, step) { send("simulate_#{step}") }
+        aggregator.report(qualified_label, self.class.label, "#{self.class.label}.#{step}" ) { send("simulate_#{step}") }
       end
     end
   end
