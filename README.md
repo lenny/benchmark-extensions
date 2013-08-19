@@ -3,19 +3,19 @@ Ruby benchmark extensions
 
 * ```BME::Runner.run(threads, repetitions, &blk)``` - Run block of code in :threads threads, :repetition times each thread.
   <pre>
-  BME::Runner.run(2, 2) do |run_id|
-    puts run_id
-  end
+    BME::Runner.run(2, 2) do |run_id|
+      puts run_id
+    end
 
-  [0][0]
-  [0][1]
-  [1][0]
-  [1][1]
+    [0][0]
+    [0][1]
+    [1][0]
+    [1][1]
   </pre>
 * ```BME::ReportAggregator``` - Threadsafe aggregating wrapper around ```#report``` from SDK Benchmark.
-  See: examples/report_aggregator.rb: examples/report_aggregator.rb
+  See: [examples/report_aggregator.rb](examples/report_aggregator.rb)
 * ```benchmark``` executable - A mini-framework with automatic discovery and statistic reporting for pluggable ```simulations```.
-
+  <pre>
     $ bundle exec benchmark --help
     Usage: benchmark [options]
     -h, --help                       Display this screen
@@ -42,7 +42,8 @@ Ruby benchmark extensions
       ManView.contact_info(12)                 total(0.32200) avg(0.02683) median(0.01650) std(0.02814) min(0.00700) max(0.09900)
       .....
       ManView(216)                             total(3.25200) avg(0.01506) median(0.00500) std(0.03255) min(0.00000) max(0.32000)
-
+  </pre>
+  
 ## Plugins
 
 Ruby files in the ```simulations/``` directory are automatically loaded.
