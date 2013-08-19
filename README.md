@@ -58,7 +58,7 @@ e.g.
 
     class ManView
       simulation 'ManView' do
-        %w(GA1001 AA1002)
+        %w(GA1001 GA1002)
       end
 
       def simulate_events
