@@ -50,19 +50,13 @@ labels = simulations.reduce([]) do |l, simulation_class|
   l
 end
 
-aggregator = nil
+aggregator = BME::ReportAggregator.new(labels, :label_width => 40, :precision => 3)
 
-Benchmark.bm(40, *labels, '>total:') do |bm|
-  aggregator = BME::ReportAggregator.new(bm)
-
-  BME::Runner.run(options[:threads], options[:repetitions]) do |runner|
-    simulations.each do |simulation_class|
-      next if options[:simulation] && simulation_class.name != options[:simulation]
-      runner << lambda { |run_id| simulation_class.run(run_id, aggregator) }
-    end
+BME::Runner.run(options[:threads], options[:repetitions]) do |runner|
+  simulations.each do |simulation_class|
+    next if options[:simulation] && simulation_class.name != options[:simulation]
+    runner << lambda { |run_id| simulation_class.run(run_id, aggregator) }
   end
-
-  aggregator.totals(labels)
 end
 
-puts "\n#{aggregator.stats(40, 5, labels)}"
+puts aggregator.stats

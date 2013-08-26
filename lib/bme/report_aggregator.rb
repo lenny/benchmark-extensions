@@ -2,40 +2,34 @@ require 'easystats'
 
 module BME
   class ReportAggregator
-    attr_reader :keyed_reports, :benchmark, :reports
+    attr_reader :labels, :keyed_reports, :total, :precision, :label_width
 
-    def initialize(benchmark)
-      @benchmark = benchmark
+    def initialize(labels, options = {})
+      @labels = labels
+      @label_width = options.fetch(:label_width, 20)
+      @precision = options.fetch(:precision, 5)
       @keyed_reports = {}
-      @reports = []
       @mutex = Mutex.new
     end
 
     def report(label, *keys, &blk)
+      r = Benchmark.measure(label, &blk)
+
       @mutex.synchronize do
-        reports << r = benchmark.report(label, &blk)
+        @total = total.nil? ? r : total + r
+        puts sprintf("%-#{label_width}s #{r}", label)
         keys.each do |k|
           (keyed_reports[k] ||= []) << r
         end
       end
     end
 
-    def totals(labels)
-      totals = labels.reduce([]) { |l, label| l << tally(keyed_reports.fetch(label)); l }
-      totals << tally(reports)
-      totals
-    end
-
-    def tally(l)
-      l.reduce { |r, total| total += r }
-    end
-
-    def stats(width, precision, labels)
-      buf = ''
+    def stats
+      buf = sprintf("%-#{label_width}s #{total}", '>Total:')
       p = precision
       labels.each do |k|
         realtimes = keyed_reports.fetch(k).map(&:real)
-        buf << sprintf("%-#{width}s total(%.#{p}f) avg(%.#{p}f) median(%.#{p}f) std(%.#{p}f) min(%.#{p}f) max(%.#{p}f)  \n",
+        buf << sprintf("%-#{label_width}s total(%.#{p}f) avg(%.#{p}f) median(%.#{p}f) std(%.#{p}f) min(%.#{p}f) max(%.#{p}f)  \n",
                        "#{k}(#{realtimes.size})", realtimes.sum, realtimes.average, realtimes.median, realtimes.standard_deviation, realtimes.min, realtimes.max)
       end
       buf

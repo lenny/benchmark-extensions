@@ -10,7 +10,7 @@ class Referee
 
   def simulate_history
     referee.history
-    sleep(0.1)
+    sleep(5)
   end
 
   def referee 
