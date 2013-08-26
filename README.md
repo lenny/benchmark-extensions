@@ -21,7 +21,7 @@ Ruby benchmark extensions
     -h, --help                       Display this screen
     -t, --threads NUM                Number of simultaneous threads per thread group
     -r, --repetitions NUM            Number of repetitions per thread
-    -s, --simulation NAME            Run only specified simulation
+    -s, --simulation NAME            Run specified simulation (can be specified more than once) 
 
     $ bundle exec benchmark -s ManView -t 3 -r 2
                                                     user     system      total        real

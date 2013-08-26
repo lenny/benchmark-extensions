@@ -15,6 +15,6 @@ class Manuscript
 
   def manuscript
     # more typical would be Manuscript.find(subject)
-    @manuscript ||= Struct.new(:order_id, :items, :history).new(:items => [], :history => [])
+    @manuscript ||= Struct.new(:order_id, :items, :history).new
   end
 end

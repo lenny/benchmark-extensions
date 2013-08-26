@@ -5,7 +5,11 @@ root_dir = File.dirname(ENV['BUNDLE_GEMFILE'])
 require 'optparse'
 require 'benchmark'
 
-options = {}
+options = {
+    :threads     => 1,
+    :repetitions => 1,
+    :simulations => []
+}
 optparse = OptionParser.new do |opts|
   opts.banner = 'Usage: benchmark [options]'
 
@@ -22,14 +26,11 @@ optparse = OptionParser.new do |opts|
     options[:repetitions] = v.to_i
   end
 
-  opts.on('-s', '--simulation NAME', 'Run only specified simulation') do |v|
-    options[:simulation] = v
+  opts.on('-s', '--simulation NAME', 'Run specified simulation (can be specified more than once)') do |v|
+    options[:simulations] << v
   end
 end
 optparse.parse!
-
-options[:threads] ||= 1
-options[:repetitions] ||= 1
 
 require 'benchmark-extensions'
 require 'bme/simulations'
@@ -39,7 +40,7 @@ require init_file if init_file
 
 Dir.glob("#{root_dir}/simulations/*.rb").each { |f| require f }
 
-simulations = BME::Simulation.select { |c| options[:simulation] ? c.name == options[:simulation] : true }
+simulations = BME::Simulation.select { |c| options[:simulations].empty? || options[:simulations].include?(c.name) }
 
 labels = simulations.reduce([]) do |l, simulation_class|
   simulation_class.steps.each do |s|
