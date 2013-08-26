@@ -19,7 +19,7 @@ Ruby benchmark extensions
     $ bundle exec benchmark --help
     Usage: benchmark [options]
     -h, --help                       Display this screen
-    -t, --threads NUM                Number of simultaneous threads per thread group
+    -t, --threads NUM                Number of threads per simulation
     -r, --repetitions NUM            Number of repetitions per thread
     -s, --simulation NAME            Run specified simulation (can be specified more than once) 
 

@@ -18,11 +18,11 @@ optparse = OptionParser.new do |opts|
     exit(0)
   end
 
-  opts.on('-t', '--threads NUM', 'Number of simultaneous threads per thread group') do |v|
+  opts.on('-t', '--threads NUM', 'Number of threads per simulation') do |v|
     options[:threads] = v.to_i
   end
 
-  opts.on('-r', '--repetitions NUM', 'Number of repetitions per thread') do |v|
+  opts.on('-r', '--repetitions NUM', 'Number of repetitions thread') do |v|
     options[:repetitions] = v.to_i
   end
 
@@ -55,10 +55,10 @@ aggregator = nil
 Benchmark.bm(40, *labels, '>total:') do |bm|
   aggregator = BME::ReportAggregator.new(bm)
 
-  BME::Runner.run(options[:threads], options[:repetitions]) do |run_id|
+  BME::Runner.run(options[:threads], options[:repetitions]) do |runner|
     simulations.each do |simulation_class|
       next if options[:simulation] && simulation_class.name != options[:simulation]
-      simulation_class.run(run_id, aggregator)
+      runner << lambda { |run_id| simulation_class.run(run_id, aggregator) }
     end
   end
 
