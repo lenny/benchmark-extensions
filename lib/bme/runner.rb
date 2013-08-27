@@ -12,7 +12,7 @@ module BME
                 repetitions.times do |i|
                   g.call("[#{group_index}][#{thread_index}][#{i}]")
                 end
-              rescue => e
+              rescue Exception => e
                 warn "#{e.inspect}\n#{e.backtrace.join("\n\t")}"
                 exit(0)
               end
