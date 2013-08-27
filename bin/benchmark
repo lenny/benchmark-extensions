@@ -52,11 +52,16 @@ end
 
 aggregator = BME::ReportAggregator.new(labels, :label_width => 40, :precision => 3)
 
-BME::Runner.run(options[:threads], options[:repetitions]) do |runner|
-  simulations.each do |simulation_class|
-    next if options[:simulation] && simulation_class.name != options[:simulation]
-    runner << lambda { |run_id| simulation_class.run(run_id, aggregator) }
+time = Benchmark.measure do
+  puts aggregator.table_header
+
+  BME::Runner.run(options[:threads], options[:repetitions]) do |runner|
+    simulations.each do |simulation_class|
+      runner << lambda { |run_id| simulation_class.run(run_id, aggregator) }
+    end
   end
 end
 
 puts aggregator.stats
+
+puts time
