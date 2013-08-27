@@ -8,8 +8,13 @@ module BME
         threads.times do |thread_index|
           groups.each_with_index do |g, group_index|
             thread_group << Thread.new do
-              repetitions.times do |i|
-                g.call("[#{group_index}][#{thread_index}][#{i}]")
+              begin
+                repetitions.times do |i|
+                  g.call("[#{group_index}][#{thread_index}][#{i}]")
+                end
+              rescue => e
+                warn "#{e.inspect}\n#{e.backtrace.join("\n\t")}"
+                exit(0)
               end
             end
           end
